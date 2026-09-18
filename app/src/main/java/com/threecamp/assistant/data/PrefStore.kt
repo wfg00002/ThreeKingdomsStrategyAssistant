@@ -2,17 +2,12 @@ package com.threecamp.assistant.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * 本地数据持久化封装（SharedPreferences）。
  * 全部数据本地存储，无任何联网。
- *
- * 持久化内容：
- * 1. 目标游戏包名（默认三国志战略版腾讯版）
- * 2. 多支队伍体力数据（JSON 数组）
- * 3. 多条城建队列（JSON 数组）
- * 4. 免费 / 半价抽卡冷却
- * 5. 队伍数量配置
  */
 class PrefStore(ctx: Context) {
 
@@ -20,18 +15,15 @@ class PrefStore(ctx: Context) {
         ctx.applicationContext.getSharedPreferences(NAME, Context.MODE_PRIVATE)
 
     // ============ 游戏包名 ============
-    /** 目标游戏包名：默认三国志战略版（腾讯版） */
     var targetPackage: String
         get() = sp.getString(K_TARGET_PKG, DEFAULT_TARGET_PKG) ?: DEFAULT_TARGET_PKG
         set(v) { sp.edit().putString(K_TARGET_PKG, v).apply() }
 
-    /** 队伍数量（多队伍管理） */
     var teamCount: Int
         get() = sp.getInt(K_TEAM_COUNT, 3)
         set(v) { sp.edit().putInt(K_TEAM_COUNT, v).apply() }
 
     // ============ 体力数据 ============
-    /** 读取全部队伍体力（按 teamCount 自动补齐空队伍） */
     fun loadStamina(): MutableList<TeamStamina> {
         val raw = sp.getString(K_STAMINA, null) ?: return defaultStamina()
         return try {
@@ -52,7 +44,6 @@ class PrefStore(ctx: Context) {
         }
     }
 
-    /** 保存全部队伍体力 */
     fun saveStamina(list: List<TeamStamina>) {
         val arr = JSONArray()
         list.forEach { t ->
@@ -73,7 +64,6 @@ class PrefStore(ctx: Context) {
     }
 
     private fun alignTeamCount(list: MutableList<TeamStamina>): MutableList<TeamStamina> {
-        // 补齐缺失队伍
         val have = list.map { it.id }.toMutableList()
         for (i in 1..teamCount) if (i !in have) list += TeamStamina(i, 0, System.currentTimeMillis())
         return list
@@ -147,7 +137,6 @@ class PrefStore(ctx: Context) {
         private const val K_FREE_NOTIFIED = "free_notified"
         private const val K_HALF_NOTIFIED = "half_notified"
 
-        /** 三国志战略版（腾讯版）包名 */
         const val DEFAULT_TARGET_PKG = "com.tencent.tmgp.sgzcl"
     }
 }
