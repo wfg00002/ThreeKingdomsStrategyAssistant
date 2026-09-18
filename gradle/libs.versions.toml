@@ -1,15 +1,13 @@
-# gradle/libs.versions.toml
-# 版本目录文件，集中管理依赖版本，便于维护
 [versions]
-agp = "8.5.2"                                # Android Gradle Plugin 版本
-kotlin = "2.0.20"                            # Kotlin 编译器版本
+agp = "8.5.2"
+kotlin = "2.0.20"
 coreKtx = "1.13.1"
 lifecycle = "2.8.4"
 activityCompose = "1.9.1"
 composeBom = "2024.06.00"
-mlkitTextChinese = "16.0.1"                  # ML Kit 中文文字识别（离线模型）
+mlkitTextChinese = "16.0.1"
 workManager = "2.9.0"
- 
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
@@ -20,10 +18,9 @@ androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graph
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
-# ML Kit 中文 OCR（自动下载离线模型，运行期不联网识别）
 mlkit-text-chinese = { group = "com.google.mlkit", name = "text-recognition-chinese", version.ref = "mlkitTextChinese" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
- 
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
