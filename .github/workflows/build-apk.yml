@@ -20,11 +20,13 @@ jobs:
       - name: 安装 Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: 给gradlew加执行权限
-        run: chmod +x ./gradlew
+      - name: 安装 Gradle
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: 8.5
 
       - name: 编译Debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: gradle assembleDebug --no-daemon --stacktrace
 
       - name: 上传APK产物
         uses: actions/upload-artifact@v4
