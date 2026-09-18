@@ -9,6 +9,7 @@ import com.threecamp.assistant.App
 import com.threecamp.assistant.engine.DispatchEngine
 import com.threecamp.assistant.notify.NotifyHelper
 import com.threecamp.assistant.ocr.OcrEngine
+import kotlin.coroutines.resume
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,9 +19,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/**
- * 无障碍服务 —— App 的"大脑"。
- */
 class ForegroundAccessibilityService : AccessibilityService() {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -33,7 +31,6 @@ class ForegroundAccessibilityService : AccessibilityService() {
     private val ocrIntervalMs = 12_000L
     private val tickIntervalMs = 60_000L
 
-    // ============ 生命周期 ============
     override fun onServiceConnected() {
         super.onServiceConnected()
         showKeepAliveNotification()
@@ -60,7 +57,6 @@ class ForegroundAccessibilityService : AccessibilityService() {
         handler.removeCallbacksAndMessages(null)
     }
 
-    // ============ 前台包名处理 ============
     private fun onForegroundPackageChanged(pkg: String) {
         val target = App.pref.targetPackage
         if (pkg == target) {
@@ -70,7 +66,6 @@ class ForegroundAccessibilityService : AccessibilityService() {
         }
     }
 
-    // ============ OCR 监听循环 ============
     private fun startMonitoring() {
         if (monitoring) return
         monitoring = true
@@ -108,7 +103,9 @@ class ForegroundAccessibilityService : AccessibilityService() {
                 object : TakeScreenshotCallback {
                     override fun onSuccess(result: ScreenshotResult) {
                         val bmp = try {
-                            result.hardwareBitmap.copy(Bitmap.Config.ARGB_8888, true)
+                            @Suppress("DEPRECATION")
+                            val hw = result.javaClass.getMethod("getHardwareBitmap").invoke(result) as? android.graphics.Bitmap
+                            hw?.copy(Bitmap.Config.ARGB_8888, true)
                         } catch (_: Throwable) { null }
                         cont.resume(bmp)
                     }
@@ -118,7 +115,6 @@ class ForegroundAccessibilityService : AccessibilityService() {
         }
     }
 
-    // ============ 本地推算巡检 ============
     private fun startTickLoop() {
         tickJob?.cancel()
         tickJob = scope.launch {
@@ -129,7 +125,6 @@ class ForegroundAccessibilityService : AccessibilityService() {
         }
     }
 
-    // ============ OriginOS 保活 ============
     private fun showKeepAliveNotification() {
         try {
             val nm = getSystemService(android.app.NotificationManager::class.java) ?: return
