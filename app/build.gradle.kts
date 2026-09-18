@@ -1,15 +1,15 @@
-// app/build.gradle.kts
+app/build.gradle.kts
 // 应用模块构建配置：Android 13/14 兼容、ML Kit OCR、Compose
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
-
+ 
 android {
     namespace = "com.threecamp.assistant"
     compileSdk = 34                                  // 编译 SDK：Android 14
-
+ 
     defaultConfig {
         applicationId = "com.threecamp.assistant"
         minSdk = 33                                  // 最低：Android 13（满足适配要求）
@@ -18,7 +18,7 @@ android {
         versionName = "1.0.0-mvp"
         ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
     }
-
+ 
     buildTypes {
         debug {
             isMinifyEnabled = false
@@ -28,7 +28,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
-
+ 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -39,21 +39,21 @@ android {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
 }
-
+ 
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-
+ 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
-
+ 
     // ML Kit 中文 OCR：离线模型，识别过程不上传网络
     implementation(libs.mlkit.text.chinese)
-
+ 
     implementation(libs.androidx.work.runtime.ktx)
 }
