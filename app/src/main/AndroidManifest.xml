@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AndroidManifest.xml
+     声明权限、无障碍服务、桌面原子组件、Activity
+     硬性要求：所有数据本地存储，仅声明本地相关权限，不申请 INTERNET -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ===== 仅本地相关权限：不申请 INTERNET，纯离线 ===== -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />          <!-- Android13+ 通知 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />          <!-- 前台服务保活 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />      <!-- 开机自启 -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" /> <!-- OriginOS 保活 -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.App"
+        tools:targetApi="34">
+
+        <!-- ===== 主界面 ===== -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.App">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- ===== 无障碍服务：监听前台包名 + 截图 OCR 调度 =====
+             OriginOS 保活核心：系统会持续维持无障碍服务运行 -->
+        <service
+            android:name=".accessibility.ForegroundAccessibilityService"
+            android:exported="false"
+            android:label="@string/accessibility_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_config" />
+        </service>
+
+        <!-- ===== 招募抽卡倒计时 桌面原子组件（4x2） ===== -->
+        <receiver
+            android:name=".widget.RecruitmentWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_recruitment_info" />
+        </receiver>
+
+        <!-- ===== 体力 + 城建 桌面原子组件（4x2） ===== -->
+        <receiver
+            android:name=".widget.StaminaWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_stamina_info" />
+        </receiver>
+
+    </application>
+</manifest>
