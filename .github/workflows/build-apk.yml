@@ -21,11 +21,13 @@ jobs:
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
 
-      - name: 给gradlew执行权限
-        run: chmod +x ./gradlew
+      - name: 安装gradle 8.7
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: 8.7
 
       - name: 编译Debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: gradle assembleDebug --no-daemon --stacktrace
 
       - name: 上传APK产物
         uses: actions/upload-artifact@v4
