@@ -23,7 +23,7 @@ jobs:
       - name: 安装 Gradle
         uses: gradle/gradle-build-action@v3
         with:
-          gradle-version: 8.5
+          gradle-version: 8.7
 
       - name: 编译Debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
