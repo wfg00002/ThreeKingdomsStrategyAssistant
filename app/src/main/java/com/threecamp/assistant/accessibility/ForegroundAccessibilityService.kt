@@ -33,6 +33,16 @@ class ForegroundAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+
+        // 反射开启截图权限（Android 13+），避免 CI 编译时找不到 canTakeScreenshots 字段
+        try {
+            val info = serviceInfo
+            val field = info.javaClass.getField("canTakeScreenshots")
+            field.setBoolean(info, true)
+            serviceInfo = info
+        } catch (_: Throwable) {
+        }
+
         showKeepAliveNotification()
         startTickLoop()
     }
